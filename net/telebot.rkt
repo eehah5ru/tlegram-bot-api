@@ -9,8 +9,8 @@
          racket/struct
          net/http-easy
 
-         "telebot/message.rkt"
-         "telebot/mongo-persistance.rkt")
+         net/telebot/message
+         net/telebot/mongo-persistance)
 
 (provide (all-defined-out))
 
