@@ -8,6 +8,7 @@
                "https://github.com/eehah5ru/behavior.git"
                "mongodb"
                "collections"
+               "predicates"
                ))
 (define build-deps '("scribble-lib" "racket-doc" "rackunit-lib"))
 (define scribblings '(("scribblings/telegram-bot-api.scrbl" ())))
