@@ -202,7 +202,7 @@
 
   (with-handlers ([exn:fail:http-easy:timeout?
                    (lambda (e)
-                     (raise-telebot-error (format "~a: timeout error") e))]
+                     (raise-telebot-error (format "~a: timeout error" endpoint) e))]
                   [exn:fail:http-easy?
                    (lambda (e)
                      (raise-telebot-error "http-level error" e))])
