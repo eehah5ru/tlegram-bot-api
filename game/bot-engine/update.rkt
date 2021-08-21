@@ -1,7 +1,7 @@
 #lang racket
 (require nested-hash)
 
-(require (prefix-in msg: "../telebot/message.rkt"))
+(require (prefix-in msg: net/telebot/message))
 
 (provide (all-defined-out))
 

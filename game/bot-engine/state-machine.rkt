@@ -7,7 +7,7 @@
 
 (require "context.rkt"
          "parameters.rkt"
-         (prefix-in ef: "../engine/effects.rkt")
+         (prefix-in ef: "effects.rkt")
          )
 
 

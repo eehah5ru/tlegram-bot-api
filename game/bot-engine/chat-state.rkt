@@ -5,7 +5,7 @@
 (require "parameters.rkt"
          "context.rkt"
          "update.rkt"
-         (prefix-in bot: "../telebot/telebot.rkt"))
+         (prefix-in bot: net/telebot))
 
 (provide (all-defined-out))
 

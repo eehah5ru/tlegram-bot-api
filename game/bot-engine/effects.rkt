@@ -2,7 +2,7 @@
 
 (require "context.rkt"
          "parameters.rkt"
-         "../telebot/message.rkt")
+         net/telebot/message)
 
 (provide (all-defined-out))
 
