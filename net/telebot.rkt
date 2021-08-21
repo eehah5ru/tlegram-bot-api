@@ -424,7 +424,7 @@
   (with-handlers ([exn:fail?
                    (lambda (e)
                      (log-error (format "updates worker error: ~a" (exn-message e)))
-                     (send-to-queue-processor (list 'error e)))])
+                     (send-to-queue-processor (list 'error e) queue-processor-thread))])
     (let loop ()
       (displayln "getting updates from TG..")
 
