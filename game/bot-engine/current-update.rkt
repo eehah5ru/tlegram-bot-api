@@ -1,5 +1,7 @@
 #lang racket
 
+(require nested-hash)
+
 (require "parameters.rkt")
 (require "update.rkt")
 
@@ -16,6 +18,9 @@
 
 (define (current-update->text)
   (hash-ref (current-update->message) 'text ""))
+
+(define (current-update->chat-id)
+  (nested-hash-ref (current-update->message) 'chat 'id))
 
 (define (match-current-update-text? pattern)
   (if (current-update->text?)
