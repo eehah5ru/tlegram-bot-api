@@ -35,7 +35,7 @@
                          (if parent-error
                              (format " / parent error: ~a" (exn-message parent-error))
                              "")))
-  (raise exn:telebot err-message))
+  (raise (exn:telebot err-message (current-continuation-marks))))
 
 ;;;
 ;;;
@@ -278,7 +278,38 @@
 ;; call to send the result.
 (define (send-message bot who payload)
   (let* ([payload (make-message payload #:chat-id who)])
-    (parse-api-call-result (api-call bot "sendMessage" payload))))
+    (parse-api-call-result (api-call bot
+                                     "sendMessage" payload))))
+
+;;;
+;;; generic verision of send message
+;;; can send messsages of different kind
+;;; text - 'text
+;;; file based types - according to
+(define (send-message* bot who payload)
+  (let* ([payload (message->payload payload)]
+         [payload (make-message payload #:chat-id who)]
+         [file-field-name (if (message-file? payload)
+                              (message-file-field-name payload)
+                              #f)]
+         [send-method (message-send-method-name payload)]
+         [a-file (cond
+                   [(not (message-file? payload))
+                    #f]
+                   [(string? (hash-ref payload file-field-name))
+                    #f]
+                   [(input-port? (hash-ref payload file-field-name))
+                    (hash-ref payload file-field-name)]
+                   [else
+                    (raise-argument-error file-field-name "should be a string? or an input-port?" payload)])])
+
+    (parse-api-call-result (api-call bot
+                                     send-method
+                                     payload
+                                     a-file
+                                     #:file-field-name file-field-name))
+
+    ))
 
 ;; reply-to -- bot: tg-bot, message: jsexpr, payload: any
 ;; Dispatches `send-message' to send `payload' in reply to the user who
@@ -316,7 +347,7 @@
                   [(input-port? photo)
                    photo]
                   [else
-                   (raise-argument-error 'photo "should be a string? or an input-port?")])])
+                   (raise-argument-error 'photo "should be a string? or an input-port?" photo)])])
     (parse-api-call-result (api-call bot "sendPhoto" payload photo))))
 
 ;;;
@@ -333,7 +364,7 @@
                    [(input-port? a-file)
                     a-file]
                    [else
-                    (raise-argument-error 'a-file "should be a string? or an input-port?")])])
+                    (raise-argument-error 'a-file "should be a string? or an input-port?" a-file)])])
     (parse-api-call-result (api-call bot "sendDocument" payload a-file #:file-field-name "document"))))
 
 ;;;
