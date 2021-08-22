@@ -67,6 +67,14 @@
          (when then
            (then sent-message))))]
 
+    [(et:send-message* then whom message)
+     (begin
+       (log-info "sending message via send-message*")
+
+       (let ([sent-message (bot:send-message* bot whom message)])
+         (when then
+           (then sent-message))))]
+
     [(et:send-photo then whom photo)
      (begin
        (log-info "sending photo...")

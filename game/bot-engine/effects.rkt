@@ -12,6 +12,8 @@
 
   (struct send-message effect (whom message))
 
+  (struct send-message* effect (whom message))
+
   (struct send-photo effect (whom photo))
 
   (struct send-file effect (whom a-file))
@@ -34,6 +36,7 @@
 (define (effect-id? v)
   (match v
     ['send-message #t]
+    ['send-messae* #t]
     ['send-photo #t]
     ['send-file #t]
     ['forward-message #t]
@@ -56,6 +59,15 @@
                                    whom
                                    (make-message message
                                                  #:reply-markup reply-markup))))
+
+(define (send-message* whom
+                       message
+                       #:then [then #f]
+                       #:reply-markup [reply-markup #f])
+  (emit-effect (types:send-message* then
+                                    whom
+                                    (make-message message
+                                                  #:reply-markup reply-markup))))
 
 (define (send-photo whom
                     photo
