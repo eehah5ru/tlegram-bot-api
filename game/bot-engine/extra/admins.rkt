@@ -17,7 +17,7 @@
 (define (admins #:include-owners? [include-owners? #f])
   (define only-admins (file->list *admins-path*))
   (if include-owners?
-      (append (owners) only-admins)
+      (set->list (set-union (list->set (owners)) (list->set only-admins)))
       only-admins))
 
 (define (add-admin admin-id)
