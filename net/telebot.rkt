@@ -30,12 +30,22 @@
 ;;;
 (struct exn:telebot exn:fail ())
 
-(define (raise-telebot-error msg [parent-error #f])
+(struct exn:telebot:blocked-by-user exn:telebot ())
+
+
+(define (raise-telebot-error msg
+                             [parent-error #f]
+                             #:mk-error [mk-error exn:telebot])
   (define err-message (string-append (format "telebot error: ~a" msg)
                          (if parent-error
                              (format " / parent error: ~a" (exn-message parent-error))
                              "")))
-  (raise (exn:telebot err-message (current-continuation-marks))))
+  (raise (mk-error err-message (current-continuation-marks))))
+
+
+(define (raise-telebot-blocked-by-user msg
+                                       [parent-error #f])
+  (raise-telebot-error msg parent-error #:mk-error exn:telebot:blocked-by-user))
 
 ;;;
 ;;;
@@ -219,9 +229,18 @@
                     (json-payload payload))
          ))
       (match resp
+        ;; ok
         [(response #:status-code 200)
          (let [(r (response-json resp))]
            r)]
+
+        ;; blocked
+        [(response #:status-code 403)
+         (begin
+           (log-warning "api call returns 403 code: ~a" (bytes->string/utf-8 (response-body resp)))
+           (raise-telebot-blocked-by-user "api call returns 403 code: ~a" (bytes->string/utf-8 (response-body resp))))]
+
+        ;; other errors
         [_ (raise-telebot-error (string-append "error-in-api-call: " (bytes->string/utf-8 (response-body resp))))]))))
 
 
