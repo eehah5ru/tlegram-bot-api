@@ -58,6 +58,7 @@
        (process-effects bot)
        (void))]))
 
+;;; FIXME: pass errors to "then" function as well as ok result!
 (define (process-effect bot effect)
   (define (handle-bot-is-blocked-by-the-user e)
     (log-warning "send-message: user ~a blocked the bot: ~a" (exn-message e)))
@@ -78,7 +79,10 @@
        (log-info "sending message via send-message*")
 
        (with-handlers
-         ([bot:exn:telebot:blocked-by-user? handle-bot-is-blocked-by-the-user])
+         ([bot:exn:telebot:blocked-by-user? handle-bot-is-blocked-by-the-user]
+          ;; silently eat all errors!
+          [exn:fail? (lambda (e)
+                       (log-error "send-message*: error sending message: ~a" (exn-message e)))])
 
          (let ([sent-message (bot:send-message* bot whom message)])
           (log-info "send-message*: message sent")
