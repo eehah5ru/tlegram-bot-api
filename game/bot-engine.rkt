@@ -72,6 +72,7 @@
        (log-info "sending message via send-message*")
 
        (let ([sent-message (bot:send-message* bot whom message)])
+         (log-info "send-message*: message sent")
          (when then
            (then sent-message))))]
 
