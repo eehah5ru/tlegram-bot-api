@@ -81,8 +81,8 @@
        (with-handlers
          ([bot:exn:telebot:blocked-by-user? handle-bot-is-blocked-by-the-user]
           ;; silently eat all errors!
-          ;; [exn:fail? (lambda (e)
-          ;;              (log-error "send-message*: error sending message: ~a" (exn-message e)))]
+          [exn:fail? (lambda (e)
+                       (log-error "send-message*: error sending message: ~a" (exn-message e)))]
           )
 
          (let ([sent-message (bot:send-message* bot whom message)])
