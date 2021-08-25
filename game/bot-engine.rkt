@@ -59,50 +59,75 @@
        (void))]))
 
 (define (process-effect bot effect)
+  (define (handle-bot-is-blocked-by-the-user e)
+    (log-warning "send-message: user ~a blocked the bot: ~a" (exn-message e)))
+
   (match effect
     [(et:send-message then whom message)
      (begin
        (log-info (string-append "sending message..."))
-       (let ([sent-message (bot:send-message bot whom message)])
-         (when then
-           (then sent-message))))]
+       (with-handlers
+         ([bot:exn:telebot:blocked-by-user? handle-bot-is-blocked-by-the-user])
+
+         (let ([sent-message (bot:send-message bot whom message)])
+          (when then
+            (then sent-message)))))]
 
     [(et:send-message* then whom message)
      (begin
        (log-info "sending message via send-message*")
 
-       (let ([sent-message (bot:send-message* bot whom message)])
-         (log-info "send-message*: message sent")
-         (when then
-           (then sent-message))))]
+       (with-handlers
+         ([bot:exn:telebot:blocked-by-user? handle-bot-is-blocked-by-the-user])
+
+         (let ([sent-message (bot:send-message* bot whom message)])
+          (log-info "send-message*: message sent")
+          (when then
+            (then sent-message)))))]
 
     [(et:send-photo then whom photo)
      (begin
        (log-info "sending photo...")
-       (let ([sent-message (bot:send-photo bot whom photo)])
-         (when then
-           (then sent-message))))]
+
+       (with-handlers
+         ([bot:exn:telebot:blocked-by-user? handle-bot-is-blocked-by-the-user])
+
+         (let ([sent-message (bot:send-photo bot whom photo)])
+          (when then
+            (then sent-message)))))]
 
     [(et:send-file then whom a-file)
      (begin
        (log-info "sending file...")
-       (let ([sent-message (bot:send-file bot whom a-file)])
-         (when then
-           (then sent-message))))]
+
+       (with-handlers
+         ([bot:exn:telebot:blocked-by-user? handle-bot-is-blocked-by-the-user])
+
+         (let ([sent-message (bot:send-file bot whom a-file)])
+          (when then
+            (then sent-message)))))]
 
     [(et:forward-message then whom message)
      (begin
        (log-info (string-append "forwarding message..."))
-       (let ([sent-message (bot:forward-message bot whom message)])
-         (when then
-           (then sent-message))))]
+
+       (with-handlers
+         ([bot:exn:telebot:blocked-by-user? handle-bot-is-blocked-by-the-user])
+
+         (let ([sent-message (bot:forward-message bot whom message)])
+          (when then
+            (then sent-message)))))]
 
     [(et:reply-to-message then msg)
      (begin
        (log-info (string-append "replying to message: " (message-text msg)))
-       (let ([sent-message (bot:reply-to bot (update->message (update)) msg)])
-         (when then
-           (then sent-message))))]
+
+       (with-handlers
+         ([bot:exn:telebot:blocked-by-user? handle-bot-is-blocked-by-the-user])
+
+         (let ([sent-message (bot:reply-to bot (update->message (update)) msg)])
+          (when then
+            (then sent-message)))))]
 
     [(et:event then event-id)
      (begin
