@@ -238,7 +238,7 @@
         [(response #:status-code 403)
          (begin
            (log-warning "api call returns 403 code: ~a" (bytes->string/utf-8 (response-body resp)))
-           (raise-telebot-blocked-by-user "api call returns 403 code: ~a" (bytes->string/utf-8 (response-body resp))))]
+           (raise-telebot-blocked-by-user (format "api call returns 403 code: ~a" (bytes->string/utf-8 (response-body resp))))))]
 
         ;; other errors
         [_ (raise-telebot-error (string-append "error-in-api-call: " (bytes->string/utf-8 (response-body resp))))]))))
