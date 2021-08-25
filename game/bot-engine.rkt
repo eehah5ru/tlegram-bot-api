@@ -61,7 +61,8 @@
 ;;; FIXME: pass errors to "then" function as well as ok result!
 (define (process-effect bot effect)
   (define (handle-bot-is-blocked-by-the-user e)
-    (log-warning "send-message: user ~a blocked the bot: ~a" (exn-message e)))
+    (log-warning "send-message: user has blocked the bot: ~a"
+                 (exn-message e)))
 
   (match effect
     [(et:send-message then whom message)
