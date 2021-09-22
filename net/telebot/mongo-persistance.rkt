@@ -34,9 +34,20 @@
 
 ;; save chat state
 (define (mongo-save-chat-state chat-id chat-state)
+  ;; mongo dict
   (define saved (if (mongo-chat-state-exist? chat-id)
                     (mongo-chat-state-query chat-id)
                     (create-mongo-dict "chatStates")))
+
+  ;; keys in old state
+  (define old-state-keys (list->set (hash-keys (unsequence-mongo-dict saved))))
+  ;; keys of new state
+  (define new-state-keys (list->set (hash-keys chat-state)))
+
+  (define orphan-keys (set-subtract old-state-keys new-state-keys))
+
+  (for ([key orphan-keys])
+    (mongo-dict-remove! saved key))
 
   (for ([(name value) chat-state])
     (mongo-dict-set! saved name value)))
