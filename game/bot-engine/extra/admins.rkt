@@ -21,11 +21,13 @@
       only-admins))
 
 (define (add-admin admin-id)
+  (define current-admins (admins))
+
   (with-output-to-file *admins-path*
     #:mode 'text
     #:exists 'replace
     (lambda ()
-      (for ([admin (append (admins) (list admin-id))])
+      (for ([admin (append current-admins (list admin-id))])
         (printf "~a\n" admin)))))
 
 (define (remove-admin admin-id)
