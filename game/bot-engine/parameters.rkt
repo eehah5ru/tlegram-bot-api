@@ -23,3 +23,8 @@
 ;; default command handler
 ;;
 (define default-command-handler (make-parameter #f))
+
+;;;
+;;; tg bot - instance of telebot
+;;;
+(define telebot-instance (make-parameter #f))

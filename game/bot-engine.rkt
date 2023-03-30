@@ -236,7 +236,8 @@
      ;; handler
      (lambda (bot cmd-name params message)
        (parameterize ([update (command-update cmd-name params message)]
-                      [user-context (make-context)])
+                      [user-context (make-context)]
+                      [telebot-instance bot])
          (restore-chat-state! bot)
          (sm:restore-state-machines!)
          ((get-command-handler (context-state-machines (user-context))))
@@ -251,14 +252,18 @@
     ;;
     (bot:add-message-handler
      bot
+
+     ;; filter
      (lambda (message)
        #t)
 
+     ;; handler
      (lambda (message)
        (log-info "handling message")
        ;; make minmal context
        (parameterize ([update (message-update message)]
-                      [user-context (make-context)])
+                      [user-context (make-context)]
+                      [telebot-instance bot])
          (restore-chat-state! bot)
          (sm:restore-state-machines!)
          (sm:update-current-state-machine (curryr handle-event 'message))
@@ -274,7 +279,8 @@
      (lambda (bkg-job)
        (log-info "handling background-job")
        (parameterize ([update (bkg-job-update (bot:bkg-job-chat-id bkg-job))]
-                      [user-context (make-context)])
+                      [user-context (make-context)]
+                      [telebot-instance bot])
          (restore-chat-state! bot)
          (sm:restore-state-machines!)
          ;; exec bkg job proc that carry all logic

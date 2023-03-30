@@ -76,6 +76,14 @@
                                      #:hash hasheq)])
      (set-tg-bot-state! bot new-state))))
 
+;;;
+;;; functionally update chat state
+;;;
+(define (update-chat-state bot chat-id updater)
+  (define c-state (chat-state bot chat-id))
+  (define new-c-state (updater c-state))
+
+  (set-chat-state bot chat-id new-c-state))
 
 ;;;
 ;;;

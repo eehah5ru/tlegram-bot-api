@@ -1,11 +1,18 @@
 #lang racket
 
+;;
+;;
+;; utils to manipulate with current update from tg
+;;
+;;
+
 (require nested-hash)
 
 (require "parameters.rkt")
 (require "update.rkt")
 
 (provide (all-defined-out))
+
 ;;;
 ;;; user's update helpers
 ;;;
